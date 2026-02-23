@@ -1,0 +1,54 @@
+{
+    "main_path": "D:/DUMP",
+    "sub_paths": [],
+    "active": false,
+    "sorting_map": {
+        "Images": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".bmp",
+            ".svg",
+            ".webp"
+        ],
+        "Documents": [
+            ".pdf",
+            ".docx",
+            ".doc",
+            ".txt",
+            ".xlsx",
+            ".csv",
+            ".md",
+            ".pptx"
+        ],
+        "Videos": [
+            ".mp4",
+            ".mkv",
+            ".avi",
+            ".mov",
+            ".wmv"
+        ],
+        "Audio": [
+            ".mp3",
+            ".wav",
+            ".flac",
+            ".aac",
+            ".m4a"
+        ],
+        "Archives": [
+            ".zip",
+            ".rar",
+            ".7z",
+            ".tar",
+            ".gz"
+        ],
+        "Executables": [
+            ".exe",
+            ".msi",
+            ".apk",
+            ".bat",
+            ".sh"
+        ]
+    }
+}

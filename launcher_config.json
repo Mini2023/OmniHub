@@ -1,0 +1,14 @@
+[
+    {
+        "name": "VS Code",
+        "path": "C:\\Users\\Mini2023\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+    },
+    {
+        "name": "TOR",
+        "path": "C:/Users/Mini2023/Desktop/Tor Browser/Browser/firefox.exe"
+    },
+    {
+        "name": "Docker Desktop",
+        "path": "C:/Program Files/Docker/Docker/Docker Desktop.exe"
+    }
+]

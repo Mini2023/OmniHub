@@ -1,0 +1,21 @@
+# API keys and secrets – NEVER commit these
+config.py
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/settings.json
+*.idea/
+
+# OS
+.DS_Store
+Thumbs.db

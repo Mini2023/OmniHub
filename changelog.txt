@@ -1,0 +1,67 @@
+📑 Omni-Hub – Offizieller Changelog
+
+v3.6.1 – The Dashboard Overhaul (Aktuell)
+
+    Neues Home-Interface: Umstellung von einer Sidebar-Navigation auf ein kachel-basiertes Dashboard mit Suchfunktion.
+
+    Integrierter Launcher: Der App-Launcher ist nun fester Bestandteil des Dashboards (Quick-Access für .exe).
+
+    Quick Actions: Einführung von Schnellzugriff-Buttons (z. B. "Clear Temp Files") direkt auf der Startseite.
+
+    Header-Update: Implementierung von Direktlinks zu GitHub/Webseite und einer Versionsanzeige mit Changelog-Anbindung.
+
+    Global Drag & Drop 2.0: Zentralisierte Drop-Zone mit intelligentem Routing.
+
+v3.5.0 – Grosses Update des Encryption Hub auf 2.1
+
+    Kaskaden-Verschlüsselung: Unterstützung für AES-256, Serpent und Twofish (einzeln oder kombiniert).
+
+    Vault Explorer: Automatische Erkennung und Anzeige von verschlüsselten Dateien im Hauptordner.
+
+    One-Click Decrypt: Direktes Laden von Vaults aus der Liste in die Entschlüsselungs-Zone.
+
+    Path Automation: Automatisches Erstellen von Unterordnern für entschlüsselten Output und "Open in Explorer"-Funktion.
+
+    UI-Fix: Dynamische Namensgebung für Vault-Dateien hinzugefügt.
+
+v3.2.0 – PDF Power & Logic Fixes
+
+    PDF Toolkit Expansion: Hinzufügen von "Image-to-PDF" Konvertierung und "Text-Extraction".
+
+    Drag-and-Drop Intelligence: System erkennt nun, ob Dateien im Dashboard (Tool-Auswahl) oder direkt in einem Tool (Sofort-Verarbeitung) abgelegt werden.
+
+    Clean Architecture: Entfernung redundanter Web-Tools zugunsten einer spezialisierten PDF-Ansicht.
+
+v3.0.0 – The Visual Revolution
+
+    Glassmorphism Update: Abschied von harten schwarzen Blöcken; Einführung von hellgrauen, abgerundeten UI-Elementen (#F0F2F5).
+
+    Farb-Refactoring: Wechsel von Pink zu einem professionellen Gletscher-Blau (#A2D2FF).
+
+    Typography: Erhöhung der Lesbarkeit durch 13pt Schriftgröße für Dateinamen.
+
+    Performance: Optimierung für GPU-Beschleunigung (GTX 1660 Ti Unterstützung).
+
+v2.5.0 – System Health & Utility Suite
+
+    Junk Cleaner: Automatisierte Reinigung von Windows-Temp-Verzeichnissen.
+
+    Duplicate Finder: MD5-Hashing zur Identifizierung identischer Dateien.
+
+    Startup Manager: Verwaltung von Windows-Autostart-Einträgen über die Registry.
+
+    Privacy Tools: Erster Prototyp für EXIF-Metadaten-Entferner.
+
+v2.0.0 – AI Integration (Experimentell; Model nicht in Programm integriert)
+
+    Dolphin 3.0 (Local AI): Einbindung von Ollama zur lokalen Dateianalyse und für allgemeinen Chat.
+
+    System Prompt Tuning: KI antwortet nun sowohl auf allgemeine Fragen als auch auf dateibezogene Befehle.
+
+v1.0.0 – Foundation
+
+    Basis-Converter: Erste Funktionalität für Video- und Bildkonvertierungen.
+
+    App-Launcher: Grundkonzept zum Starten externer Programme.
+
+    Drag & Drop: Implementierung des ersten globalen Datei-Handlers.
