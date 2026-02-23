@@ -1,27 +1,27 @@
-# OmniHub: The Overly Ambitious "Swiss Army Knife"
+# OmniHub: The  "Swiss Army Knife"
 
-Welcome to **OmniHub**. Let's be honest—this started as a playground for testing ideas and seeing how many features one desktop app could handle before the UI started feeling like a cockpit. While it looks professional and runs on PySide6, this is primarily a **joke and test project** designed to push the boundaries of "feature bloat" in the most elegant way possible.
+Welcome to **OmniHub**. This is just a test and joke project not intended for actual usage or public release. It is a collection of tools that i created to play around with stuff like AI, file management, system monitoring and encryption.
 
-A significant portion of this project was co-authored by AI entities from the future—specifically **Claude Sonnet 4.6** and **Gemini 3.1 Flash**. If something works exceptionally well, credit the digital brains. If it crashes, blame Edward Kopp.
+A significant portion of this project was created by AI agents because i am lazy, and that was something i wanted to play around with. I used mainly **Claude Sonnet 4.6** for heavy tasks and **Gemini 3.1 Flash** for light tasks. If something works like shit well, blame the AI's. If it works credit me.
 
 ---
 
 ## Key Features
 
-- **🧠 AI Assistant**: Deeply integrated module for local file searching, summarization, and chat. Powered by Ollama for maximum privacy.
-- **🔄 Universal Converter**: A one-stop shop for converting images, videos, and documents without opening a browser.
-- **📦 Archive Master**: A unified, modern interface for handling `.zip`, `.rar`, and `.7z` archives.
-- **📁 Folder Watcher**: A silent background service that auto-sorts your clutter-filled "Downloads" folder into a temple of organization.
-- **🚀 App Launcher**: A sleek grid-based dashboard for launching your favorite apps with a single click.
-- **🛡️ Encryption Vault**: A secure local storage solution with a "2026 Pro" aesthetic for your sensitive data.
-- **🌡️ System Monitoring**: Real-time System Health stats and a Disk Heatmap to visualize where your storage went.
-- **📋 Productivity Plus**: Built-in Clipboard History, PDF document tools, and Image Pro processing.
-
+- **🧠 AI Assistant**: A module for file summarization, chat and local file searching. Powered by local Olamma or Gemini via API.
+- **🔄 Universal Converter**: A module for easy conversion of multible formats and file types.
+- **📦 Archive Master**: A module for unpacking and packing Archives (.zip .rar .7z)
+- **📁 Folder Watcher**: A module for auto sorting selected folders into a temple of organization.
+- **🚀 App Launcher**: A dashboard mosule for quik access to your favorite apps.
+- **🛡️ Encryption Vault**: A module for encrypting and decrypting files into Vaults. (AES-256, Twofish, Serpent)
+- **🌡️ System Health**: Module for monitoring system health and fixing simple issues. (TEMP cleaner, Duplicate scanner, etc)
+- **📋 Other Tools**: Clipboard history, PDF tools, Image tools, live widgets in dashboard etc.
+- **Planned Tools**: expansion of image tools by integrating AI, Expansion of the quik actions in the dashboard and so on.
 ---
 
-## For Developers: The "Just Plug It In" Architecture
+## For Developers: Modular Architecture
 
-OmniHub was designed with a modular-first philosophy. We’ve ensured that adding new functionality doesn't require open-heart surgery on the core engine. If you're looking to expand this madness, follow the plugin pattern:
+OmniHub was designed with a modular-first philosophy. You can add new features by simply adding a new module to the `plugins/` directory.
 
 ### 1. Isolated Plugin Modules
 All UI components for new features live in the `plugins/` directory. Each tab is a self-contained Python file (e.g., `tab_your_feature.py`).
