@@ -503,7 +503,7 @@ class MainWindow(QMainWindow):
         btn_git = QPushButton("GitHub")
         btn_git.setIcon(qta.icon('fa5b.github', color="#4A5568"))
         btn_git.setStyleSheet("border: none; color: #4A5568; font-weight: 600; padding: 5px;")
-        btn_git.clicked.connect(lambda: QDesktopServices.openUrl("https://github.com"))
+        btn_git.clicked.connect(lambda: QDesktopServices.openUrl("https://github.com/Mini2023/OmniHub"))
         links.addWidget(btn_web)
         links.addWidget(btn_git)
         header.addLayout(links)
