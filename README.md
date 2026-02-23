@@ -1,50 +1,44 @@
-# Project Omni-Hub: The Swiss Army Knife Desktop Application
+# OmniHub: The Overly Ambitious "Swiss Army Knife"
 
-Welcome to Project Omni-Hub! This is a modular, expandable Python desktop application built with PySide6, featuring a modern Dark Mode/Pink Accent theme.
+Welcome to **OmniHub**. Let's be honest—this started as a playground for testing ideas and seeing how many features one desktop app could handle before the UI started feeling like a cockpit. While it looks professional and runs on PySide6, this is primarily a **joke and test project** designed to push the boundaries of "feature bloat" in the most elegant way possible.
 
-## Features Included
-1. **Universal Converter**: Convert images, video, and docs.
-2. **Archive Master**: Unified interface for zip, rar, and 7z.
-3. **AI Assistant**: Connects to a local Ollama instance for file searching and local summarization.
-4. **Folder Watcher**: Background service that auto-sorts files in "Downloads".
-5. **App Launcher**: One-click grid to launch frequently used applications.
-6. **2026 Pro Add-ons**: Clipboard History, Encryption Vault, Disk Heatmap.
+A significant portion of this project was co-authored by AI entities from the future—specifically **Claude Sonnet 4.6** and **Gemini 3.1 Flash**. If something works exceptionally well, credit the digital brains. If it crashes, blame Edward Kopp.
 
 ---
 
-## Developer Guide: Adding a New Plugin Tab
+## Key Features
 
-To make Omni-Hub expandable, the UI and logic are fully modularized via a plugin-based architecture. To add a new tab to the main application window, follow these simple steps:
+- **🧠 AI Assistant**: Deeply integrated module for local file searching, summarization, and chat. Powered by Ollama for maximum privacy.
+- **🔄 Universal Converter**: A one-stop shop for converting images, videos, and documents without opening a browser.
+- **📦 Archive Master**: A unified, modern interface for handling `.zip`, `.rar`, and `.7z` archives.
+- **📁 Folder Watcher**: A silent background service that auto-sorts your clutter-filled "Downloads" folder into a temple of organization.
+- **🚀 App Launcher**: A sleek grid-based dashboard for launching your favorite apps with a single click.
+- **🛡️ Encryption Vault**: A secure local storage solution with a "2026 Pro" aesthetic for your sensitive data.
+- **🌡️ System Monitoring**: Real-time System Health stats and a Disk Heatmap to visualize where your storage went.
+- **📋 Productivity Plus**: Built-in Clipboard History, PDF document tools, and Image Pro processing.
 
-### 1. Create a Plugin Module
-Create a new Python file in the `plugins/` directory (e.g., `tab_my_feature.py`).
+---
 
-### 2. Subclass QWidget
-In your new file, create a class that inherits from `PySide6.QtWidgets.QWidget`.
+## For Developers: The "Just Plug It In" Architecture
 
+OmniHub was designed with a modular-first philosophy. We’ve ensured that adding new functionality doesn't require open-heart surgery on the core engine. If you're looking to expand this madness, follow the plugin pattern:
+
+### 1. Isolated Plugin Modules
+All UI components for new features live in the `plugins/` directory. Each tab is a self-contained Python file (e.g., `tab_your_feature.py`).
+
+### 2. Standardized Logic
+Decouple your business logic! Place heavy-duty computations or data handling in the `logic/` directory (e.g., `your_logic.py`). This keeps the UI responsive and the code testable.
+
+### 3. Quick Registration
+Integrating a new feature is as simple as subclassing `QWidget`, importing it into `ui_components/main_window.py`, and calling `self.tabs.addTab()`. 
+
+#### Example Registration:
 ```python
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from plugins.tab_your_feature import YourFeatureTab
 
-class MyFeatureTab(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        layout = QVBoxLayout(self)
-        
-        # Add your brilliant UI components here
-        label = QLabel("Welcome to my new feature!")
-        layout.addWidget(label)
+# Inside MainWindow.__init__
+self.new_tab = YourFeatureTab()
+self.tabs.addTab(self.new_tab, "Your Feature")
 ```
 
-### 3. Register the Tab in Main Window
-Open `ui_components/main_window.py` and import your new module:
-```python
-from plugins.tab_my_feature import MyFeatureTab
-```
-
-Inside the `__init__` method of `MainWindow`, add the tab to the central `QTabWidget`:
-```python
-self.my_feature_tab = MyFeatureTab()
-self.tabs.addTab(self.my_feature_tab, "My New Feature")
-```
-
-Enjoy extending Project Omni-Hub!
+Enjoy extending (or breaking) the OmniHub ecosystem!
