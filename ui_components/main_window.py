@@ -1,13 +1,14 @@
 import os
 import json
 import subprocess
-from PySide6.QtCore import Qt, QSize, QFileInfo, QTimer
+from PySide6.QtCore import Qt, QSize, QFileInfo, QTimer, QEasingCurve, QPropertyAnimation, QPoint, Signal
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QColor, QCursor, QAction, QDesktopServices, QIcon
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, 
                                 QPushButton, QStackedWidget, QLabel, QFrame, 
                                 QGridLayout, QComboBox, QProgressBar,
-                                QMessageBox, QMenu, QLineEdit, QScrollArea,
+                                QMessageBox, QMenu, QLineEdit, QScrollArea, QListWidget, QListWidgetItem,
                                 QFileIconProvider, QGraphicsDropShadowEffect)
+
 import qtawesome as qta
 
 from plugins.tab_universal_converter import UniversalConverterTab
@@ -21,19 +22,25 @@ from plugins.tab_system_health import SystemHealthTab
 from plugins.tab_pdf_docs import PdfDocsTab
 from plugins.tab_image_pro import ImageProTab
 from logic.folder_watcher import WatchdogManager
+from ui_components.quick_actions_module import QuickActionsModule
+from logic.quick_actions import ZipAllAction
+
 
 class SystemHealthWidget(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedSize(160, 35)
         self.setCursor(Qt.PointingHandCursor)
-        self.setStyleSheet("""
+        self.base_style = """
             SystemHealthWidget { 
-                background-color: #FFFFFF; border-radius: 12px; border: 1px solid #D0D7DE;
+                background-color: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(255, 255, 255, 1.0);
+                border-radius: 15px;
             }
-            SystemHealthWidget:hover { border: 1px solid #3182CE; background-color: #F7FAFC; }
-            QLabel { background: transparent; border: none; padding: 2px; }
-        """)
+            SystemHealthWidget:hover { border: 1px solid #3182CE; background-color: white; }
+        """
+        self.setStyleSheet(self.base_style)
+
         layout = QHBoxLayout(self)
         layout.setContentsMargins(10, 0, 10, 0)
         
@@ -71,13 +78,16 @@ class WatchdogWidget(QFrame):
         self.manager = manager
         self.setFixedSize(200, 35)
         self.setCursor(Qt.PointingHandCursor)
-        self.setStyleSheet("""
+        self.base_style = """
             WatchdogWidget {
-                background-color: #FFFFFF; border-radius: 12px; border: 1px solid #D0D7DE;
+                background-color: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(255, 255, 255, 1.0);
+                border-radius: 15px;
             }
-            WatchdogWidget:hover { border: 1px solid #3182CE; background-color: #F7FAFC; }
-            QLabel { background: transparent; border: none; padding: 2px; }
-        """)
+            WatchdogWidget:hover { border: 1px solid #3182CE; background-color: white; }
+        """
+        self.setStyleSheet(self.base_style)
+
         
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(10, 0, 10, 0)
@@ -149,13 +159,16 @@ class ContextMemoryWidget(QFrame):
         self._ai_tab = None
         self.setFixedSize(210, 35)
         self.setCursor(Qt.PointingHandCursor)
-        self.setStyleSheet("""
+        self.base_style = """
             ContextMemoryWidget {
-                background-color: #FFFFFF; border-radius: 12px; border: 1px solid #D0D7DE;
+                background-color: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(255, 255, 255, 1.0);
+                border-radius: 15px;
             }
-            ContextMemoryWidget:hover { border: 1px solid #3182CE; background-color: #F7FAFC; }
-            QLabel { background: transparent; border: none; padding: 1px; }
-        """)
+            ContextMemoryWidget:hover { border: 1px solid #3182CE; background-color: white; }
+        """
+        self.setStyleSheet(self.base_style)
+
         layout = QHBoxLayout(self)
         layout.setContentsMargins(8, 0, 8, 0)
         layout.setSpacing(6)
@@ -237,7 +250,8 @@ class LauncherSlot(QPushButton):
         self.key = key
         self.app_path = ""
         self.app_name = ""
-        self.setFixedSize(80, 80)
+        self.setFixedSize(60, 60)
+
         self.setCursor(Qt.PointingHandCursor)
         self.refresh()
         
@@ -256,30 +270,34 @@ class LauncherSlot(QPushButton):
 
         if self.app_path and os.path.exists(self.app_path):
             self.setText("")
-            # Native Icon Extraction
             info = QFileInfo(self.app_path)
             icon = QFileIconProvider().icon(info)
             self.setIcon(icon)
-            self.setIconSize(QSize(42, 42))
+            self.setIconSize(QSize(36, 36))
+
             self.setToolTip(f"Start: {self.app_name}")
             self.setStyleSheet("""
                 QPushButton {
-                    background-color: #FFFFFF; border: 1px dashed #E1E4E8; border-radius: 8px;
+                    background-color: rgba(255, 255, 255, 0.8);
+                    border: 1px solid rgba(255, 255, 255, 1.0);
+                    border-radius: 15px;
                 }
-                QPushButton:hover { background-color: #EDF2F7; border: 1px solid #3182CE; }
+                QPushButton:hover { background-color: white; border: 1px solid #3182CE; }
             """)
         else:
-            self.setText("+")
-            self.setIcon(qta.icon('fa5s.plus', color="#718096"))
-            self.setIconSize(QSize(24, 24))
+            self.setText("")
+            self.setIcon(qta.icon('fa5s.plus', color="#A0AEC0"))
+            self.setIconSize(QSize(20, 20))
             self.setStyleSheet("""
                 QPushButton {
-                    background-color: #FFFFFF; border: 1px dashed #E1E4E8; border-radius: 8px;
-                    color: #718096; font-size: 20px; font-weight: bold;
+                    background-color: rgba(248, 250, 252, 0.5);
+                    border: 1px dashed #CBD5E0;
+                    border-radius: 15px;
                 }
-                QPushButton:hover { background-color: #F7FAFC; border: 1px solid #3182CE; color: #3182CE; }
+                QPushButton:hover { background-color: rgba(235, 248, 255, 0.8); border: 1px solid #3182CE; }
             """)
             self.setToolTip("Slot belegen")
+
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAutoFillBackground(False)
 
@@ -321,111 +339,301 @@ class ToolTile(QFrame):
     def __init__(self, title, description, icon_name, index, parent=None):
         super().__init__(parent)
         self.index = index
-        self.setFrameShape(QFrame.StyledPanel)
-        self.setStyleSheet("""
+        self.setCursor(Qt.PointingHandCursor)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        
+        self.base_style = """
             ToolTile {
-                background-color: #FFFFFF; border-radius: 12px; border: 1px solid #D0D7DE;
+                background-color: rgba(255, 255, 255, 0.75);
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                border-radius: 20px;
             }
-        """)
+        """
+        self.setStyleSheet(self.base_style)
         
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        layout.setContentsMargins(20, 15, 20, 15)
+        layout.setContentsMargins(20, 18, 20, 18)
+        layout.setSpacing(6)
         
         self.icon_lbl = QLabel()
-        self.icon_lbl.setPixmap(qta.icon(icon_name, color="#3182CE").pixmap(32, 32))
+        self.icon_lbl.setPixmap(qta.icon(icon_name, color="#3182CE").pixmap(36, 36))
         self.icon_lbl.setAlignment(Qt.AlignLeft)
-        self.icon_lbl.setStyleSheet("background: transparent; border: none; margin-left: -2px;")
+        self.icon_lbl.setStyleSheet("background: transparent; border: none;")
         layout.addWidget(self.icon_lbl)
         
         title_lbl = QLabel(title)
-        title_lbl.setStyleSheet("font-size: 14px; font-weight: bold; color: #2D3748; background: transparent; border: none;")
-        title_lbl.setAlignment(Qt.AlignLeft)
+        title_lbl.setStyleSheet("font-size: 15px; font-weight: 800; color: #2D3748; background: transparent;")
         layout.addWidget(title_lbl)
         
         desc_lbl = QLabel(description)
-        desc_lbl.setStyleSheet("font-size: 10px; color: #718096; background: transparent; border: none;")
-        desc_lbl.setAlignment(Qt.AlignLeft)
+        desc_lbl.setStyleSheet("font-size: 11px; color: #718096; background: transparent;")
         desc_lbl.setWordWrap(True)
         layout.addWidget(desc_lbl)
         
-        self.setCursor(Qt.PointingHandCursor)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setAutoFillBackground(False)
-        
         self.shadow = QGraphicsDropShadowEffect(self)
-        self.shadow.setBlurRadius(15)
-        self.shadow.setXOffset(0)
-        self.shadow.setYOffset(4)
+        self.shadow.setBlurRadius(20)
+        self.shadow.setOffset(0, 4)
         self.shadow.setColor(QColor(0, 0, 0, 0))
         self.setGraphicsEffect(self.shadow)
 
+        self._anim = QPropertyAnimation(self.shadow, b"blurRadius")
+        self._anim.setDuration(200)
+
     def enterEvent(self, event):
-        self.setStyleSheet("ToolTile { background-color: #FFFFFF; border: 1px solid #3182CE; border-radius: 12px; }")
-        self.shadow.setColor(QColor(0, 0, 0, 40))
+        self.setStyleSheet("ToolTile { background-color: white; border: 1px solid #3182CE; border-radius: 20px; }")
+        self._anim.setStartValue(20)
+        self._anim.setEndValue(35)
+        self._anim.start()
+        self.shadow.setColor(QColor(49, 130, 206, 40))
         super().enterEvent(event)
 
     def leaveEvent(self, event):
-        self.setStyleSheet("ToolTile { background-color: #FFFFFF; border: 1px solid #D0D7DE; border-radius: 12px; }")
+        self.setStyleSheet(self.base_style)
+        self._anim.setStartValue(35)
+        self._anim.setEndValue(20)
+        self._anim.start()
         self.shadow.setColor(QColor(0, 0, 0, 0))
         super().leaveEvent(event)
+
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.window().go_to_tool(self.index)
 
-class GlobalDropZone(QFrame):
+
+class SlideOutMenu(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setObjectName("SlideOut")
         self.setStyleSheet("""
-            GlobalDropZone {
-                background-color: white; border: 2px dashed #CBD5E0; border-radius: 20px;
+            QFrame#SlideOut {
+                background-color: rgba(255, 255, 255, 0.9);
+                border-left: 1px solid #3182CE;
+                border-radius: 0px 20px 20px 0px;
             }
         """)
+        self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(10, 15, 10, 15)
+        self.layout.setSpacing(10)
+
+        title = QLabel("Hub Actions")
+        title.setStyleSheet("font-weight: 800; color: #3182CE; font-size: 10px; text-transform: uppercase;")
+        self.layout.addWidget(title)
+
+        self.btn_zip = self.create_btn("📦 Alle zippen", "fa5s.file-archive")
+        self.btn_pdf = self.create_btn("📄 In PDF (AI)", "fa5s.file-pdf")
+        self.btn_ai = self.create_btn("🤖 An AI senden", "fa5s.robot")
+        self.btn_image = self.create_btn("🖼 In Image Pro", "fa5s.image")
+
+    def create_btn(self, text, icon):
+        btn = QPushButton(text)
+        btn.setIcon(qta.icon(icon, color="#4A5568"))
+        btn.setStyleSheet("""
+            QPushButton {
+                background: transparent; border: none; color: #4A5568; 
+                text-align: left; padding: 5px; font-size: 11px; font-weight: 600;
+            }
+            QPushButton:hover { background: rgba(49, 130, 206, 0.1); color: #3182CE; border-radius: 5px; }
+        """)
+        btn.setCursor(Qt.PointingHandCursor)
+        self.layout.addWidget(btn)
+        return btn
+
+class GlobalDropZone(QFrame):
+    files_changed = Signal(int)
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAcceptDrops(True)
+        self.files = []
+        self.base_style = """
+            GlobalDropZone {
+                background-color: rgba(255, 255, 255, 0.7);
+                border: 2px dashed rgba(49, 130, 206, 0.3);
+                border-radius: 20px;
+            }
+        """
+        self.setStyleSheet(self.base_style)
         
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(30, 20, 30, 20)
-        
-        icon_lbl = QLabel()
-        icon_lbl.setPixmap(qta.icon('fa5s.cloud-upload-alt', color="#3182CE").pixmap(50, 50))
-        icon_lbl.setStyleSheet("background: transparent;")
-        layout.addWidget(icon_lbl)
+        self.main_layout = QHBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSpacing(0)
+
+        # Content Area
+        self.content = QWidget()
+        content_l = QVBoxLayout(self.content)
+        content_l.setContentsMargins(20, 10, 20, 10)
+        content_l.setSpacing(5)
+
+        header = QHBoxLayout()
+        header.setSpacing(10)
+        self.icon_lbl = QLabel()
+        self.icon_lbl.setPixmap(qta.icon('fa5s.cloud-upload-alt', color="#3182CE").pixmap(32, 32))
+        self.icon_lbl.setStyleSheet("background: transparent;")
+        header.addWidget(self.icon_lbl)
         
         vbox = QVBoxLayout()
-        vbox.setAlignment(Qt.AlignCenter)
+        vbox.setSpacing(0)
         lbl = QLabel("Global Drop-Hub")
-        lbl.setStyleSheet("font-size: 20px; font-weight: bold; color: #2D3748; background: transparent;")
+        lbl.setStyleSheet("font-size: 15px; font-weight: 800; color: #2D3748; background: transparent;")
         vbox.addWidget(lbl)
+        self.sub_lbl = QLabel("Persistenter Kontext")
+        self.sub_lbl.setStyleSheet("font-size: 10px; color: #A0AEC0; background: transparent;")
+        vbox.addWidget(self.sub_lbl)
+        header.addLayout(vbox)
+
+        header.addStretch()
+
+        self.btn_clear = QPushButton()
+        self.btn_clear.setIcon(qta.icon('fa5s.times', color="#CBD5E0"))
+        self.btn_clear.setFixedSize(24, 24)
+        self.btn_clear.setStyleSheet("border: none; background: transparent;")
+        self.btn_clear.setCursor(Qt.PointingHandCursor)
+        self.btn_clear.clicked.connect(self.clear_hub)
+        self.btn_clear.setVisible(False)
+        header.addWidget(self.btn_clear)
+        content_l.addLayout(header)
+
+        # List of files
+        self.list_widget = QListWidget()
+        self.list_widget.setStyleSheet("""
+            QListWidget {
+                background: transparent; border: none; font-size: 11px; color: #4A5568;
+            }
+            QListWidget::item { padding: 4px; border-bottom: 1px solid rgba(226, 232, 240, 0.5); }
+        """)
+        self.list_widget.verticalScrollBar().setFixedWidth(4)
+        content_l.addWidget(self.list_widget)
+        self.main_layout.addWidget(self.content, 1)
+
+        # Slide-out Logic
+        self.menu = SlideOutMenu(self)
+        self.menu.setFixedWidth(130)
+        self.menu.move(self.width(), 0)
+        self.menu_visible = False
         
-        sub = QLabel("Dateien hier ablegen für Sofort-Aktionen & KI-Analyse")
-        sub.setStyleSheet("font-size: 13px; color: #718096; background: transparent;")
-        vbox.addWidget(sub)
-        layout.addLayout(vbox)
-        layout.addStretch()
-        self.setMinimumHeight(120)
+        self.handle = QPushButton(self)
+        self.handle.setFixedSize(20, 40)
+        self.handle.setIcon(qta.icon('fa5s.chevron-left', color="#3182CE"))
+        self.handle.setStyleSheet("""
+            QPushButton { 
+                background: white; border: 1px solid #E2E8F0; 
+                border-radius: 10px 0px 0px 10px; border-right: none;
+            }
+        """)
+        self.handle.setCursor(Qt.PointingHandCursor)
+        self.handle.clicked.connect(self.toggle_menu)
+        self.handle.setVisible(False)
+
+        self.setMinimumHeight(130)
+        self.setFixedHeight(160)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setAutoFillBackground(False)
 
         self.shadow = QGraphicsDropShadowEffect(self)
         self.shadow.setBlurRadius(20)
         self.shadow.setColor(QColor(0,0,0,0))
         self.setGraphicsEffect(self.shadow)
+        
+        self._anim = QPropertyAnimation(self.shadow, b"blurRadius")
+        self._anim.setDuration(300)
+
+        # Menu Animation
+        self.menu_anim = QPropertyAnimation(self.menu, b"pos")
+        self.menu_anim.setDuration(300)
+        self.menu_anim.setEasingCurve(QEasingCurve.OutQuint)
+
+    def resizeEvent(self, event):
+        if not self.menu_visible:
+            self.menu.move(self.width(), 0)
+        else:
+            self.menu.move(self.width() - 130, 0)
+        self.menu.setFixedHeight(self.height())
+        self.handle.move(self.width() - (20 if not self.menu_visible else 150), self.height()//2 - 20)
+        super().resizeEvent(event)
+
+    def toggle_menu(self):
+        self.menu_visible = not self.menu_visible
+        start = self.menu.pos()
+        end_x = self.width() - 130 if self.menu_visible else self.width()
+        self.menu_anim.setStartValue(start)
+        self.menu_anim.setEndValue(QPoint(end_x, 0))
+        self.menu_anim.start()
+        
+        icon = 'fa5s.chevron-right' if self.menu_visible else 'fa5s.chevron-left'
+        self.handle.setIcon(qta.icon(icon, color="#3182CE"))
+        
+        # Handle Move
+        handle_x = self.width() - (150 if self.menu_visible else 20)
+        self.handle.move(handle_x, self.height()//2 - 20)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        paths = [u.toLocalFile() for u in event.mimeData().urls()]
+        self.add_files(paths)
+        event.acceptProposedAction()
+        # Visual feedback
+        self.setStyleSheet(self.base_style + "border-color: #48BB78; background-color: rgba(240, 255, 244, 0.8);")
+        QTimer.singleShot(500, lambda: self.setStyleSheet(self.base_style))
+
+    def add_files(self, paths):
+        from PySide6.QtWidgets import QListWidgetItem
+        for p in paths:
+            if p not in self.files:
+                self.files.append(p)
+                item = QListWidgetItem(f"📄 {os.path.basename(p)}")
+                item.setToolTip(p)
+                self.list_widget.addItem(item)
+        
+        count = len(self.files)
+        has_files = count > 0
+        self.handle.setVisible(has_files)
+        self.btn_clear.setVisible(has_files)
+        self.sub_lbl.setText(f"Geladene Dateien: {count}")
+        self.files_changed.emit(count)
+
+    def clear_hub(self):
+        self.files = []
+        self.list_widget.clear()
+        self.handle.setVisible(False)
+        self.btn_clear.setVisible(False)
+        self.sub_lbl.setText("Persistenter Kontext")
+        if self.menu_visible: self.toggle_menu()
+        self.files_changed.emit(0)
+
 
     def enterEvent(self, event):
-        self.setStyleSheet("GlobalDropZone { background-color: #EDF2F7; border: 2px dashed #3182CE; border-radius: 20px; }")
-        self.shadow.setColor(QColor(0,0,0,30))
+        self.setStyleSheet("""
+            GlobalDropZone {
+                background-color: rgba(235, 248, 255, 0.85);
+                border: 2px dashed #3182CE;
+                border-radius: 20px;
+            }
+        """)
+        self._anim.setStartValue(20)
+        self._anim.setEndValue(35)
+        self._anim.start()
+        self.shadow.setColor(QColor(49, 130, 206, 30))
         super().enterEvent(event)
 
     def leaveEvent(self, event):
-        self.setStyleSheet("GlobalDropZone { background-color: white; border: 2px dashed #CBD5E0; border-radius: 20px; }")
+        self.setStyleSheet(self.base_style)
+        self._anim.setStartValue(35)
+        self._anim.setEndValue(20)
+        self._anim.start()
         self.shadow.setColor(QColor(0,0,0,0))
         super().leaveEvent(event)
+
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         print("MainWindow initializing...")
-        self.setWindowTitle("Omni-Hub v3.9.5")
+        self.setWindowTitle("Omni-Hub v4.5.1")
         self.resize(1150, 850)
         self.setAcceptDrops(True)
         self.tools = []
@@ -461,58 +669,89 @@ class MainWindow(QMainWindow):
             QWidget#Dashboard { background-color: #F8FAFC; }
             QLabel { background-color: transparent; border: none; }
             #LauncherBox, #ToolBox, #QuickActionBox { 
-                background-color: #FFFFFF; border: 1px solid #D0D7DE; border-radius: 12px; 
+                background-color: rgba(255, 255, 255, 0.7); 
+                border: 1px solid rgba(255, 255, 255, 0.9); 
+                border-radius: 20px; 
             }
         """)
         self.dashboard_widget.setObjectName("Dashboard")
         dash_layout = QVBoxLayout(self.dashboard_widget)
-        dash_layout.setContentsMargins(30, 15, 30, 30)
-        dash_layout.setSpacing(6) # Even tighter
+        dash_layout.setContentsMargins(40, 30, 40, 40)
+        dash_layout.setSpacing(25)
         
-        # Header
+        # --- Header (Top Bar) ---
         header = QHBoxLayout()
+        header.setSpacing(15)
+
+
         
-        self.ver_lbl = QLabel("ver. 3.9.5")
-        self.ver_lbl.setStyleSheet("""
-            background: #EDF2F7; color: #718096; padding: 4px 12px; 
-            border-radius: 12px; font-size: 11px; font-weight: bold;
-        """)
-        header.addWidget(self.ver_lbl)
+        # Left: Version & Changelog
+        header_left = QHBoxLayout()
+        header_left.setSpacing(10)
+        
+        # Consistent Style for Header Items (Explicit Selectors to avoid parsing errors)
+        header_item_base = """
+            background: rgba(255,255,255,0.8); border: 1px solid #E2E8F0; 
+            border-radius: 12px; padding: 6px 12px; font-size: 11px; color: #4A5568; font-weight: 700;
+        """
+        
+        self.ver_lbl = QLabel("ver. 4.5.1")
+        self.ver_lbl.setStyleSheet(f"QLabel {{ {header_item_base} color: #A0AEC0; }}")
+        header_left.addWidget(self.ver_lbl)
         
         self.btn_changelog = QPushButton("Changelog")
-        self.btn_changelog.setIcon(qta.icon('fa5s.clipboard-list', color="#3182CE"))
-        self.btn_changelog.setStyleSheet("""
-            QPushButton { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 4px 12px; font-size: 11px; color: #3182CE; }
-            QPushButton:hover { background: #F7FAFC; }
-        """)
         self.btn_changelog.setCursor(Qt.PointingHandCursor)
+        self.btn_changelog.setStyleSheet(f"QPushButton {{ {header_item_base} }} QPushButton:hover {{ background: #EDF2F7; }}")
         self.btn_changelog.clicked.connect(lambda: os.startfile("changelog.txt") if os.path.exists("changelog.txt") else None)
-        header.addWidget(self.btn_changelog)
+        header_left.addWidget(self.btn_changelog)
+        header.addLayout(header_left)
         
         header.addStretch()
+        
+        # Center: Title
         title = QLabel("Omni-Hub Dashboard")
-        title.setStyleSheet("font-size: 26px; font-weight: 800; color: #1A202C; background: transparent;")
+        title.setStyleSheet("font-size: 28px; font-weight: 900; color: #1A202C; letter-spacing: -0.5px; background: transparent;")
         header.addWidget(title)
+        
         header.addStretch()
         
-        links = QHBoxLayout()
+        # Right: Web & GitHub
+        header_right = QHBoxLayout()
+        header_right.setSpacing(10)
+        
+        btn_style_blue = f"QPushButton {{ {header_item_base} color: #3182CE; }} QPushButton:hover {{ background: #EBF8FF; border-color: #BEE3F8; }}"
+        
         btn_web = QPushButton("Webpage")
-        btn_web.setIcon(qta.icon('fa5s.globe', color="#4A5568"))
-        btn_web.setStyleSheet("border: none; color: #4A5568; font-weight: 600; padding: 5px;")
+        btn_web.setIcon(qta.icon('fa5s.globe', color="#3182CE"))
+        btn_web.setStyleSheet(btn_style_blue)
+        btn_web.setCursor(Qt.PointingHandCursor)
         btn_web.clicked.connect(lambda: QDesktopServices.openUrl("https://www.google.com/search?q=google.com"))
+        
         btn_git = QPushButton("GitHub")
-        btn_git.setIcon(qta.icon('fa5b.github', color="#4A5568"))
-        btn_git.setStyleSheet("border: none; color: #4A5568; font-weight: 600; padding: 5px;")
+        btn_git.setIcon(qta.icon('fa5b.github', color="#2D3748"))
+        btn_git.setStyleSheet(btn_style_blue)
+        btn_git.setCursor(Qt.PointingHandCursor)
         btn_git.clicked.connect(lambda: QDesktopServices.openUrl("https://github.com/Mini2023/OmniHub"))
-        links.addWidget(btn_web)
-        links.addWidget(btn_git)
-        header.addLayout(links)
+
+
+        
+        header_right.addWidget(btn_web)
+        header_right.addWidget(btn_git)
+        header.addLayout(header_right)
+
+        
         dash_layout.addLayout(header)
         
-        # Status Bar (Compact Live-Widgets)
+        # Separator Line
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setStyleSheet("border: none; background: #E2E8F0; height: 1px;")
+        dash_layout.addWidget(line)
+        
+        # --- Live Widgets ---
         status_bar = QHBoxLayout()
-        status_bar.setContentsMargins(0, 0, 0, 0) # Close gap
-        status_bar.setSpacing(10)
+        status_bar.setContentsMargins(0, 0, 0, 0)
+        status_bar.setSpacing(15)
         
         self.watchdog_widget = WatchdogWidget(self.watchdog_manager)
         status_bar.addWidget(self.watchdog_widget)
@@ -526,64 +765,111 @@ class MainWindow(QMainWindow):
         status_bar.addStretch()
         dash_layout.addLayout(status_bar)
         
-        # Mid
-        mid_layout = QHBoxLayout()
-        mid_layout.setSpacing(20)
+        # --- Main Content Area (2 Columns) ---
+        main_content_hbox = QHBoxLayout()
+        main_content_hbox.setSpacing(25)
+        
+        # LEFT COLUMN: Top Row (Drop/Launcher) + Bottom Section (Tools)
+        left_column = QVBoxLayout()
+        left_column.setSpacing(25)
+        
+        # 1. Top Row: Global Drop-Hub & App Launcher
+        top_row = QHBoxLayout()
+        top_row.setSpacing(20)
+        
+        # Global Drop-Hub (persistent)
         self.drop_hub = GlobalDropZone()
-        self.drop_hub.setObjectName("GlobalDrop")
-        mid_layout.addWidget(self.drop_hub, 7)
+        self.drop_hub.setMinimumWidth(380)
+        top_row.addWidget(self.drop_hub, 4)
         
+        # Connect Hub signals
+        self.drop_hub.files_changed.connect(lambda c: self.context_memory_widget.update_health(c)) # Re-using for status
+        
+        # Connect SlideOut Menu Actions
+        self.drop_hub.menu.btn_zip.clicked.connect(lambda: self.qa_module.run_action(ZipAllAction))
+        self.drop_hub.menu.btn_ai.clicked.connect(lambda: self.send_hub_to_tool(4))   # AI Assistant
+        self.drop_hub.menu.btn_image.clicked.connect(lambda: self.send_hub_to_tool(6)) # Image Pro
+        self.drop_hub.menu.btn_pdf.clicked.connect(lambda: self.send_hub_to_tool(5))   # PDF Docs
+
+
+
+        
+        # App Launcher (compressed)
         launcher_vbox = QVBoxLayout()
+        launcher_vbox.setSpacing(8)
         launcher_header = QHBoxLayout()
-        launcher_title = QLabel("App Launcher")
-        launcher_title.setStyleSheet("font-weight: bold; color: #4A5568; font-size: 14px; background: transparent;")
-        launcher_header.addWidget(launcher_title)
-        
-        btn_edit_launcher = QPushButton()
-        btn_edit_launcher.setIcon(qta.icon('fa5s.edit', color="#718096"))
-        btn_edit_launcher.setFixedSize(24, 24)
-        btn_edit_launcher.setCursor(Qt.PointingHandCursor)
-        btn_edit_launcher.setStyleSheet("border: none; background: transparent;")
-        btn_edit_launcher.clicked.connect(self.show_launcher_edit_menu)
-        launcher_header.addWidget(btn_edit_launcher)
+        l_title = QLabel("Launcher")
+        l_title.setStyleSheet("font-weight: 800; color: #4A5568; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;")
+        launcher_header.addWidget(l_title)
         launcher_header.addStretch()
+        
+        btn_edit_l = QPushButton()
+        btn_edit_l.setIcon(qta.icon('fa5s.cog', color="#A0AEC0"))
+        btn_edit_l.setFixedSize(22, 22)
+        btn_edit_l.setCursor(Qt.PointingHandCursor)
+        btn_edit_l.setStyleSheet("border: none; background: transparent;")
+        btn_edit_l.clicked.connect(self.show_launcher_edit_menu)
+        launcher_header.addWidget(btn_edit_l)
         launcher_vbox.addLayout(launcher_header)
 
         launcher_box = QFrame()
         launcher_box.setObjectName("LauncherBox")
-        launcher_box.setMinimumWidth(280)
+        launcher_box.setMaximumHeight(120)
         launcher_l = QVBoxLayout(launcher_box)
-        slots_layout = QHBoxLayout()
-        slots_layout.setAlignment(Qt.AlignCenter)
-        slots_layout.setContentsMargins(0, 10, 0, 10)
+        launcher_l.setContentsMargins(10, 10, 10, 10)
+        slots_l = QHBoxLayout()
+        slots_l.setSpacing(12)
         self.slots = [LauncherSlot(0), LauncherSlot(1), LauncherSlot(2)]
-        for s in self.slots: slots_layout.addWidget(s)
-        launcher_l.addLayout(slots_layout)
+        for s in self.slots: slots_l.addWidget(s)
+        launcher_l.addLayout(slots_l)
         launcher_vbox.addWidget(launcher_box)
+        top_row.addLayout(launcher_vbox, 3)
         
-        mid_layout.addLayout(launcher_vbox, 3)
-        dash_layout.addLayout(mid_layout)
+        left_column.addLayout(top_row)
         
-        # Bottom
-        bottom_layout = QHBoxLayout()
-        bottom_layout.setSpacing(25)
+        # 2. Bottom Section: Favorite Tools & Search/List
+        tools_vbox = QVBoxLayout()
+        tools_vbox.setSpacing(15)
         
-        left_side = QVBoxLayout()
-        main_tools_lbl = QLabel("Main Tools")
-        main_tools_lbl.setStyleSheet("font-weight: bold; color: #4A5568; font-size: 15px; background: transparent;")
-        left_side.addWidget(main_tools_lbl)
+        mt_header = QHBoxLayout()
+        main_tools_lbl = QLabel("Fav Tools")
+        main_tools_lbl.setStyleSheet("font-weight: 800; color: #4A5568; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;")
+        mt_header.addWidget(main_tools_lbl)
+        mt_header.addStretch()
+        
+        self.btn_edit_favs = QPushButton()
+        self.btn_edit_favs.setIcon(qta.icon('fa5s.star', color="#A0AEC0"))
+        self.btn_edit_favs.setFixedSize(22, 22)
+        self.btn_edit_favs.setCursor(Qt.PointingHandCursor)
+        self.btn_edit_favs.setStyleSheet("border: none; background: transparent;")
+        self.btn_edit_favs.clicked.connect(self.show_favorites_menu)
+        mt_header.addWidget(self.btn_edit_favs)
+        tools_vbox.addLayout(mt_header)
+        
         self.main_tools_grid = QGridLayout()
         self.main_tools_grid.setSpacing(15)
-        left_side.addLayout(self.main_tools_grid)
+        self.main_tools_grid.setContentsMargins(15, 12, 15, 12)
         
-        search_layout = QHBoxLayout()
-        search_layout.addWidget(QLabel("Search tools:"))
+        main_tools_box = QFrame()
+        main_tools_box.setObjectName("ToolBox")
+        main_tools_box.setLayout(self.main_tools_grid)
+        tools_vbox.addWidget(main_tools_box)
+        
+        search_vbox = QVBoxLayout()
+        search_vbox.setSpacing(10)
+        search_vbox.setContentsMargins(0, 0, 0, 0)
+        
         self.tool_search = QLineEdit()
-        self.tool_search.setPlaceholderText("Filter tools...")
-        self.tool_search.setStyleSheet("padding: 8px; border-radius: 8px; border: 1px solid #CBD5E0; background: white;")
+        self.tool_search.setPlaceholderText("🔍 Tools...")
+        self.tool_search.setStyleSheet("""
+            QLineEdit { 
+                padding: 10px 15px; border-radius: 12px; border: 1px solid #E2E8F0; 
+                background: rgba(255,255,255,0.8); font-size: 13px; color: #2D3748;
+            }
+            QLineEdit:focus { border: 1px solid #3182CE; background: white; }
+        """)
         self.tool_search.textChanged.connect(self.filter_tools)
-        search_layout.addWidget(self.tool_search)
-        left_side.addLayout(search_layout)
+        search_vbox.addWidget(self.tool_search)
         
         self.all_tools_scroll = QScrollArea()
         self.all_tools_scroll.setWidgetResizable(True)
@@ -591,29 +877,65 @@ class MainWindow(QMainWindow):
         self.tool_list_widget = QWidget()
         self.tool_list_layout = QVBoxLayout(self.tool_list_widget)
         self.tool_list_layout.setAlignment(Qt.AlignTop)
+        self.tool_list_layout.setContentsMargins(0, 0, 0, 0)
+        self.tool_list_layout.setSpacing(8)
         self.all_tools_scroll.setWidget(self.tool_list_widget)
-        left_side.addWidget(self.all_tools_scroll)
-        bottom_layout.addLayout(left_side, 7)
+        search_vbox.addWidget(self.all_tools_scroll)
+        tools_vbox.addLayout(search_vbox)
         
-        right_side = QVBoxLayout()
-        qa_lbl = QLabel("Quick Actions")
-        qa_lbl.setStyleSheet("font-weight: bold; color: #4A5568; font-size: 15px; background: transparent;")
-        right_side.addWidget(qa_lbl)
-        qa_box = QFrame()
-        qa_box.setObjectName("QuickActionBox")
-        qa_vbox = QVBoxLayout(qa_box)
-        self.btn_qa_clean = QPushButton("✨ Clear Temp Files")
-        self.btn_qa_clean.setStyleSheet("""
-            QPushButton { text-align: left; padding: 12px; border: none; font-weight: 600; border-radius: 8px; color: #2D3748; background: transparent;}
-            QPushButton:hover { background-color: #F7FAFC; color: #3182CE; }
+        left_column.addLayout(tools_vbox)
+        main_content_hbox.addLayout(left_column, 7)
+        
+        # RIGHT COLUMN: Quick Actions Sidebar
+        qa_vbox = QVBoxLayout()
+        qa_vbox.setSpacing(10)
+        
+        qa_header = QHBoxLayout()
+        qa_title = QLabel("Actions")
+        qa_title.setStyleSheet("font-weight: 800; color: #4A5568; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;")
+        qa_header.addWidget(qa_title)
+        qa_header.addStretch()
+        
+        btn_style_qa = "border: none; background: transparent;"
+        self.btn_add_qa = QPushButton()
+        self.btn_add_qa.setIcon(qta.icon('fa5s.plus', color="#3182CE"))
+        self.btn_add_qa.setFixedSize(22, 22)
+        self.btn_add_qa.setStyleSheet(btn_style_qa)
+        self.btn_add_qa.setCursor(Qt.PointingHandCursor)
+        
+        self.btn_rem_qa = QPushButton()
+        self.btn_rem_qa.setIcon(qta.icon('fa5s.minus', color="#E53E3E"))
+        self.btn_rem_qa.setFixedSize(22, 22)
+        self.btn_rem_qa.setStyleSheet(btn_style_qa)
+        self.btn_rem_qa.setCursor(Qt.PointingHandCursor)
+        
+        qa_header.addWidget(self.btn_add_qa)
+        qa_header.addWidget(self.btn_rem_qa)
+        qa_vbox.addLayout(qa_header)
+        
+        self.qa_module = QuickActionsModule()
+        self.qa_module.setObjectName("QuickActionBox")
+        self.qa_module.set_drop_hub(self.drop_hub) # Link to Global Context
+
+        # Full-height style with more distinct separation
+        self.qa_module.setStyleSheet("""
+            #QuickActionBox {
+                background-color: rgba(255, 255, 255, 0.45);
+                border-left: 2px solid rgba(49, 130, 206, 0.2);
+                border-radius: 20px;
+            }
         """)
-        self.btn_qa_clean.clicked.connect(self.quick_action_cleanup)
-        qa_vbox.addWidget(self.btn_qa_clean)
-        qa_vbox.addStretch()
-        right_side.addWidget(qa_box)
-        bottom_layout.addLayout(right_side, 3)
-        dash_layout.addLayout(bottom_layout)
+        self.btn_add_qa.clicked.connect(lambda: self.qa_module.open_library(len(self.qa_module.active_action_names)))
+        self.btn_rem_qa.clicked.connect(self.qa_module.remove_last_action)
+        qa_vbox.addWidget(self.qa_module, 1) # ADD STRETCH
+        
+        main_content_hbox.addLayout(qa_vbox, 2)
+
+        dash_layout.addLayout(main_content_hbox)
+        
         self.main_stack.addWidget(self.dashboard_widget)
+
+
 
     def setup_tool_view(self):
         self.tool_view = QWidget()
@@ -666,11 +988,59 @@ class MainWindow(QMainWindow):
             self.context_memory_widget.bind_ai_tab(ai_widget)
 
     def populate_tool_lists(self):
-        for i in range(min(3, len(self.tools))):
-            t = self.tools[i]
-            tile = ToolTile(t['title'], t['desc'], t['icon'], i, self)
-            self.main_tools_grid.addWidget(tile, 0, i)
+        # Load favorites from config or default to first 4
+        favs = [0, 1, 2, 4] # Defaults
+        fav_config = "tool_favorites.json"
+        if os.path.exists(fav_config):
+            try:
+                with open(fav_config, 'r') as f:
+                    favs = json.load(f)
+            except: pass
+        
+        # Clear existing favorites grid
+        for i in reversed(range(self.main_tools_grid.count())):
+            self.main_tools_grid.itemAt(i).widget().setParent(None)
+
+        for i, tool_idx in enumerate(favs[:4]):
+            if tool_idx < len(self.tools):
+                t = self.tools[tool_idx]
+                tile = ToolTile(t['title'], t['desc'], t['icon'], tool_idx, self)
+                self.main_tools_grid.addWidget(tile, 0, i)
         self.refresh_tool_list()
+
+    def show_favorites_menu(self):
+        menu = QMenu(self)
+        menu.setStyleSheet("QMenu { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 5px; }")
+        
+        fav_config = "tool_favorites.json"
+        
+        for i, t in enumerate(self.tools):
+            act = QAction(f"★ {t['title']}", self)
+            act.triggered.connect(lambda chk, idx=i: self.toggle_favorite(idx))
+            menu.addAction(act)
+        menu.exec(QCursor.pos())
+
+    def toggle_favorite(self, idx):
+        fav_config = "tool_favorites.json"
+        favs = [0, 1, 2, 4]
+        if os.path.exists(fav_config):
+            try:
+                with open(fav_config, 'r') as f:
+                    favs = json.load(f)
+            except: pass
+        
+        if idx in favs:
+            favs.remove(idx)
+        else:
+            if len(favs) >= 4:
+                favs.pop(0)
+            favs.append(idx)
+        
+        with open(fav_config, 'w') as f:
+            json.dump(favs, f)
+        
+        self.populate_tool_lists()
+
 
     def refresh_tool_list(self, filter_text=""):
         for i in reversed(range(self.tool_list_layout.count())): 
@@ -710,6 +1080,18 @@ class MainWindow(QMainWindow):
         self.combo_switch.blockSignals(True)
         self.combo_switch.setCurrentIndex(index)
         self.combo_switch.blockSignals(False)
+        self.main_stack.setCurrentIndex(1)
+        self.tool_stack.setCurrentIndex(index)
+
+    def send_hub_to_tool(self, index):
+        if not self.drop_hub.files:
+            QMessageBox.information(self, "Omni-Hub Hub", "Der Hub ist leer. Bitte Dateien hinzufügen.")
+            return
+        self.go_to_tool(index)
+        target = self.tool_stack.widget(index)
+        if hasattr(target, 'receive_global_drop'):
+            target.receive_global_drop(self.drop_hub.files)
+
         self._switch_to_tool(index)
 
     def _switch_to_tool(self, index):

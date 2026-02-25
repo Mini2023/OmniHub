@@ -334,7 +334,7 @@ class EncryptionVaultTab(QWidget):
             return
 
         # Smart Naming Logic
-        default_name = "MySecureVault.enc"
+        default_name = "SecureVault.enc"
         custom_name = self.enc_vault_name.text().strip()
         if custom_name:
             if not custom_name.lower().endswith(".enc"):

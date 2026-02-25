@@ -1,67 +1,102 @@
-📑 Omni-Hub – Offizieller Changelog
+Omni-Hub Changelog
+v4.5.1 (Bugfix Patch)
 
-v3.6.1 – The Dashboard Overhaul (Aktuell)
+    Grid-Logic: Behebung des Layout-Glitch beim dynamischen Hinzufügen/Entfernen von Quick Actions.
 
-    Neues Home-Interface: Umstellung von einer Sidebar-Navigation auf ein kachel-basiertes Dashboard mit Suchfunktion.
+    Memory Management: Implementierung von deleteLater() für entfernte Widgets zur Vermeidung von Speicherlecks.
 
-    Integrierter Launcher: Der App-Launcher ist nun fester Bestandteil des Dashboards (Quick-Access für .exe).
+v4.5 (Global Context Update)
 
-    Quick Actions: Einführung von Schnellzugriff-Buttons (z. B. "Clear Temp Files") direkt auf der Startseite.
+    Global Drop-Hub: Umstellung auf persistenten Dateispeicher (Dateien bleiben gelistet).
 
-    Header-Update: Implementierung von Direktlinks zu GitHub/Webseite und einer Versionsanzeige mit Changelog-Anbindung.
+    Context-Linking: Automatische Dateiverknüpfung zwischen Drop-Hub und Quick Actions/Modulen.
 
-    Global Drag & Drop 2.0: Zentralisierte Drop-Zone mit intelligentem Routing.
+    UI: Hinzufügen eines Slide-out Menüs für erweiterte Datei-Aktionen im Hub.
 
-v3.5.0 – Grosses Update des Encryption Hub auf 2.1
+    Feature: Implementierung eines "Clear List" Buttons im Dashboard-Widget.
 
-    Kaskaden-Verschlüsselung: Unterstützung für AES-256, Serpent und Twofish (einzeln oder kombiniert).
+v4.4 (Image Pro Module)
 
-    Vault Explorer: Automatische Erkennung und Anzeige von verschlüsselten Dateien im Hauptordner.
+    Layout: 3-Spalten-Design (Dateiliste | Action-Center | Output-Vorschau).
 
-    One-Click Decrypt: Direktes Laden von Vaults aus der Liste in die Entschlüsselungs-Zone.
+    Konsole: Integration einer Status-Konsole für Echtzeit-Feedback der Bearbeitungsschritte.
 
-    Path Automation: Automatisches Erstellen von Unterordnern für entschlüsselten Output und "Open in Explorer"-Funktion.
+    Smart Tools: Integration von rembg (Hintergrundentfernung) und Smart Focus Crop.
 
-    UI-Fix: Dynamische Namensgebung für Vault-Dateien hinzugefügt.
+    UI: Dynamische Parameter-Menüs (z.B. Qualitäts-Slider) je nach gewählter Funktion.
 
-v3.2.0 – PDF Power & Logic Fixes
+v4.3 / v4.3.1 (Dashboard Refactoring)
 
-    PDF Toolkit Expansion: Hinzufügen von "Image-to-PDF" Konvertierung und "Text-Extraction".
+    UI-Struktur: Einführung einer vertikalen Sidebar (1x8 Grid) für Quick Actions über die volle Fensterhöhe.
 
-    Drag-and-Drop Intelligence: System erkennt nun, ob Dateien im Dashboard (Tool-Auswahl) oder direkt in einem Tool (Sofort-Verarbeitung) abgelegt werden.
+    Visuals: Implementierung von Glassmorphismus-Elementen (1px Rahmen, Transparenz, border-radius: 20px).
 
-    Clean Architecture: Entfernung redundanter Web-Tools zugunsten einer spezialisierten PDF-Ansicht.
+    Main Tools: Erweiterung auf 4 Slots mit benutzerdefinierter Favoriten-Auswahl.
 
-v3.0.0 – The Visual Revolution
+    Optimierung: Vertikale Kompression von Drop-Hub und App-Launcher zur Erhöhung der Tool-Listen-Sichtbarkeit.
 
-    Glassmorphism Update: Abschied von harten schwarzen Blöcken; Einführung von hellgrauen, abgerundeten UI-Elementen (#F0F2F5).
+v4.2 (Quick Action Engine)
 
-    Farb-Refactoring: Wechsel von Pink zu einem professionellen Gletscher-Blau (#A2D2FF).
+    Architektur: Umstellung auf ein modulares Klassen-System für Quick Actions.
 
-    Typography: Erhöhung der Lesbarkeit durch 13pt Schriftgröße für Dateinamen.
+    Bibliothek: Integration von 20+ vordefinierten Aktionen (System, Media, AI).
 
-    Performance: Optimierung für GPU-Beschleunigung (GTX 1660 Ti Unterstützung).
+    Customization: Implementierung eines Bibliotheks-Managers zum Hinzufügen/Entfernen von Dashboard-Kacheln.
 
-v2.5.0 – System Health & Utility Suite
+v4.1 / v4.1.2 (AI Assistant Polish)
 
-    Junk Cleaner: Automatisierte Reinigung von Windows-Temp-Verzeichnissen.
+    Chat-UI: Umstellung auf Messenger-Layout (User: rechts / AI: links).
 
-    Duplicate Finder: MD5-Hashing zur Identifizierung identischer Dateien.
+    Engine-Switch: Auswahlmöglichkeit zwischen Gemini Pro und Gemini Flash.
 
-    Startup Manager: Verwaltung von Windows-Autostart-Einträgen über die Registry.
+    Fallback-Logik: Automatischer Wechsel auf Flash-Modell bei Quota-Überschreitung (Error 429).
 
-    Privacy Tools: Erster Prototyp für EXIF-Metadaten-Entferner.
+    Context Fix: X-Button zum manuellen Entfernen von Datei-Kontexten hinzugefügt.
 
-v2.0.0 – AI Integration (Experimentell; Model nicht in Programm integriert)
+v3.9.6 (PDF Deep Analysis)
 
-    Dolphin 3.0 (Local AI): Einbindung von Ollama zur lokalen Dateianalyse und für allgemeinen Chat.
+    Feature: Integration von genai.upload_file für die Inhaltsanalyse von PDF-Dokumenten.
 
-    System Prompt Tuning: KI antwortet nun sowohl auf allgemeine Fragen als auch auf dateibezogene Befehle.
+    UI: Header-Verkleinerung im Assistant-Modul zur Optimierung der Chat-Fläche.
 
-v1.0.0 – Foundation
+v3.9.5 (AI Foundation Update)
 
-    Basis-Converter: Erste Funktionalität für Video- und Bildkonvertierungen.
+    API-Integration: Erstimplementierung der Google Gemini API Anbindung.
 
-    App-Launcher: Grundkonzept zum Starten externer Programme.
+    Context Engine: Entwicklung des ersten Systems zur Erkennung von Datei-Metadaten für den Chat-Kontext.
 
-    Drag & Drop: Implementierung des ersten globalen Datei-Handlers.
+    Quick Actions: Einführung der ersten Basis-Aktionen (Zusammenfassen, Erklären) für Textdateien.
+
+v3.5 – v3.9 (Feature Expansion)
+
+    Global Drop-Hub: Einführung des ersten Drag-and-Drop-Bereichs im Dashboard.
+
+    Watchdog System: Implementierung des Hintergrund-Dienstes zur Überwachung von Systemressourcen.
+
+    Tool-Archiv: Aufbau der durchsuchbaren Liste für alle integrierten Sub-Module.
+
+    Design: Umstellung des gesamten Farbschemas auf "Gletscher-Blau" mit abgerundeten UI-Komponenten.
+
+v3.0 (The Dashboard Core)
+
+    Modularer Aufbau: Kompletter Rewrite der GUI-Logik auf ein modulares System für leichtere Erweiterbarkeit.
+
+    Dashboard: Einführung des zentralen Hauptfensters mit Live-Status-Widgets.
+
+    App Launcher: Integration der ersten Schnellstart-Leiste für externe Anwendungen.
+
+v2.0 – v2.5 (Infrastructure & Logic)
+
+    Backend: Migration der Core-Logik auf eine stabilere Python-Klassenstruktur.
+
+    Config System: Implementierung der config.json zur dauerhaften Speicherung von Nutzereinstellungen.
+
+    Local Tools: Integration erster lokaler Werkzeuge wie einfache Dateimanipulation und System-Infoboxen.
+
+v1.0 (Initial Release)
+
+    MVP: Erstellung des Grundgerüsts in PyQt6.
+
+    Basic UI: Erstes Fenster-Layout mit Titelleiste und Navigations-Dummy.
+
+    Base Engine: Grundlegende Initialisierungs-Routinen für die App-Suite.    

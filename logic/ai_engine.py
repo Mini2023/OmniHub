@@ -270,7 +270,37 @@ def test_ai_connection(backend: Backend = "ollama") -> str:
         return _dispatch('Reply only with: "Gemini Pro verbunden ✓"', "gemini_pro")
 
 
+def analyze_image(filepath: str, prompt: str, backend: Backend = "gemini_flash") -> str:
+    """Analyze an image using multimodal AI (Gemini)."""
+    if backend == "ollama":
+        return "[Error] Ollama-Bildanalyse noch nicht integriert (erfordert Llava/InternVL)."
+    
+    if GEMINI_API_KEY == "YOUR_GEMINI_API_KEY_HERE":
+        return "[Error] Kein Gemini API-Key vorhanden."
+
+    try:
+        from google import genai
+        from google.genai import types
+        import PIL.Image
+
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        img = PIL.Image.open(filepath)
+        
+        response = client.models.generate_content(
+            model=GEMINI_PRO_MODEL if backend == "gemini_pro" else GEMINI_FLASH_MODEL,
+            contents=[prompt, img],
+            config=types.GenerateContentConfig(
+                system_instruction="Du bist ein Bild-Experte. Antworte präzise auf die Analyse-Anfrage."
+            )
+        )
+        return response.text or "(Keine Analyse möglich)"
+    except Exception as e:
+        if _is_quota_error(e) and backend == "gemini_pro":
+            return analyze_image(filepath, prompt, "gemini_flash")
+        return f"[AI Image Error] {e}"
+
 def get_context_fill_ratio(conversation_history: list[dict]) -> float:
+
     """Return 0.0–1.0 representing how full the context window is."""
     total_text = " ".join(m.get("content", "") for m in conversation_history)
     used_tokens = _count_tokens_approx(total_text)
