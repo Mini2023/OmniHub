@@ -19,6 +19,14 @@ A significant portion of this project was created by AI agents because i am lazy
 - **Planned Tools**: expansion of image tools by integrating AI, Expansion of the quick actions in the dashboard and so on.
 ---
 
+## New in v4.5
+
+- **Image Pro Module**: A module for easy editing of images, including AI features using gemini. (background removal, smart focus crop, AI optimization etc)
+- **Global Drop-Hub**: Fixes and improvements.
+- **Quick Actions**: Huge expansion of library and structural changes.
+- **Dashboard**: Major UI update of the dashboard, including more costumization options and new layout.
+
+
 ## For Developers: Modular Architecture
 
 OmniHub was designed with a modular-first philosophy. You can add new features by simply adding a new module to the `plugins/` directory.
