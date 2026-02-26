@@ -26,7 +26,11 @@ A significant portion of this project was created by AI agents because i am lazy
 - **Quick Actions**: Huge expansion of library and structural changes.
 - **Dashboard**: Major UI update of the dashboard, including more costumization options and new layout.
 
+## Download / Webpage
 
+ omnihubwebpage.vercel.app
+ **Download via the Webpage or Github** (release or .zip)
+ 
 ## For Developers: Modular Architecture
 
 OmniHub was designed with a modular-first philosophy. You can add new features by simply adding a new module to the `plugins/` directory.
