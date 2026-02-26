@@ -28,8 +28,8 @@ A significant portion of this project was created by AI agents because i am lazy
 
 ## Download / Webpage
 
- - omnihubwebpage.vercel.app
- -**Download via the Webpage or Github** (release or .zip)
+ - https://omnihubwebpage.vercel.app/
+ - **Download via the Webpage or Github** (release or .zip)
  
 ## For Developers: Modular Architecture
 
